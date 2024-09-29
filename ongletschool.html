@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -20,8 +20,6 @@
     body {
       display: grid;
       place-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
     }
 
     .wrapper {
@@ -35,12 +33,11 @@
       padding: 2%;
       color: #fff;
       outline: 0;
-      border: 2px solid #ccc;
+      border: 2px solid #fed6b8;
       cursor: pointer;
       position: relative;
       background-color: rgba(0, 0, 0, 0);
       margin: 5px;
-      transition: 0.3s;
     }
 
     .fill::after {
@@ -60,8 +57,14 @@
     }
 
     .icon {
-      font-size: 1.5em;
+      font-size: 1em;
     }
+
+    .blog:hover,
+    .blog::after {
+      background-color: #ffbd2f;
+    }
+
 
     /* Style for each button's hover effect */
     .ent-rennes:hover,

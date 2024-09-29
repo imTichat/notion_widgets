@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes Outils ENSSAT</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+
+    .wrapper {
+      padding-top: 10px;
+      display: inline-flex;
+    }
+
+    .fill {
+      width: 50px;
+      height: 50px;
+      padding: 2%;
+      color: #fff;
+      outline: 0;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      background-color: rgba(0, 0, 0, 0);
+      margin: 5px;
+      transition: 0.3s;
+    }
+
+    .fill::after {
+      content: "";
+      width: 100%;
+      z-index: -1;
+      position: absolute;
+      height: 100%;
+      top: 5px;
+      left: 5px;
+      transition: 0.2s;
+    }
+
+    .fill:hover::after {
+      top: 0px;
+      left: 0px;
+    }
+
+    .icon {
+      font-size: 1.5em;
+    }
+
+    /* Style for each button's hover effect */
+    .ent-rennes:hover,
+    .ent-rennes::after {
+      background-color: #005baa;
+    }
+
+    .messagerie-enssat:hover,
+    .messagerie-enssat::after {
+      background-color: #4caf50;
+    }
+
+    .intranet-enssat:hover,
+    .intranet-enssat::after {
+      background-color: #ff9800;
+    }
+
+    .site-enssat:hover,
+    .site-enssat::after {
+      background-color: #673ab7;
+    }
+
+    .chatgpt:hover,
+    .chatgpt::after {
+      background-color: #3eae9e;
+    }
+
+    .social {
+      position: relative;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    .social:hover {
+      color: #fff;
+    }
+
+    .icon {
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <!-- Start ENT Rennes Icon -->
+    <div id="ent-rennes" onclick="navigate(this.id)" class="fill ent-rennes">
+      <span class="icon"><i class="fa-solid fa-graduation-cap"></i></span>
+    </div>
+    <!-- End ENT Rennes Icon -->
+
+    <!-- Start Messagerie ENSSAT Icon -->
+    <div id="messagerie-enssat" onclick="navigate(this.id)" class="fill messagerie-enssat">
+      <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+    </div>
+    <!-- End Messagerie ENSSAT Icon -->
+
+    <!-- Start Intranet ENSSAT Icon -->
+    <div id="intranet-enssat" onclick="navigate(this.id)" class="fill intranet-enssat">
+      <span class="icon"><i class="fa-solid fa-network-wired"></i></span>
+    </div>
+    <!-- End Intranet ENSSAT Icon -->
+
+    <!-- Start Site ENSSAT Icon -->
+    <div id="site-enssat" onclick="navigate(this.id)" class="fill site-enssat">
+      <span class="icon"><i class="fa-solid fa-globe"></i></span>
+    </div>
+    <!-- End Site ENSSAT Icon -->
+
+    <!-- Start ChatGPT Icon -->
+    <div id="chatgpt" onclick="navigate(this.id)" class="fill chatgpt">
+      <span class="icon"><i class="fa-solid fa-robot"></i></span>
+    </div>
+    <!-- End ChatGPT Icon -->
+
+  </div>
+
+  <script>
+    function navigate(id) {
+      if (id === "ent-rennes") {
+        window.open("https://ent.univ-rennes1.fr/f/bureau/normal/render.uP", '_blank').focus();
+      } else if (id === "messagerie-enssat") {
+        window.open("https://messagerie.enssat.fr/login.php?url=https%3A%2F%2Fmessagerie.enssat.fr%2Fservices%2Fportal%2F&horde_logout_token=ybDTJqdmC9foVQtKT_-sEg7", '_blank').focus();
+      } else if (id === "intranet-enssat") {
+        window.open("https://intranet.enssat.fr/apps/scolarite/trombi/trombi.php", '_blank').focus();
+      } else if (id === "site-enssat") {
+        window.open("https://www.enssat.fr/", '_blank').focus();
+      } else if (id === "chatgpt") {
+        window.open("https://chat.openai.com/", '_blank').focus();
+      }
+    }
+  </script>
+</body>
+
+</html>

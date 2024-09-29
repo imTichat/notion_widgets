@@ -68,9 +68,14 @@
       background-color: #ffbd2f;
     }
 
+    .canva:hover,
+    .canva::after {
+      background: #51993f;
+    }
+
     .email:hover,
     .email::after {
-      background-color: #23c8c8;
+      background-color: #1b8d8d;
     }
 
     .facebook:hover,
@@ -80,7 +85,7 @@
 
     .instagram:hover,
     .instagram::after {
-      background: #f86ee1;
+      background: #bb4f85;
     }
 
     .linkedin:hover,
@@ -91,11 +96,6 @@
     .twitter:hover,
     .twitter::after {
       background-color: #26a7de;
-    }
-
-    .reddit:hover,
-    .reddit::after {
-      background-color: #ff4500;
     }
 
     .tiktok:hover,
@@ -137,6 +137,13 @@
 
 <body>
   <div class="wrapper">
+
+    <!-- Start Canva Icon -->
+    <div id="canva" onclick="navigate(this.id)" class="fill canva">
+      <span class="icon canva"><i class="fa-solid fa-envelope"></i></span>
+    </div>
+    <!-- End Canva Icon -->
+
     <!-- Start email Icon -->
     <div id="email" onclick="navigate(this.id)" class="fill email">
       <span class="icon email"><i class="fa-solid fa-envelope"></i></span>
@@ -197,6 +204,8 @@
       //if you want the URL to open in the same window use '_parent'  instead of '_blank'
 
       if (id === "email") {
+        window.open("https://www.canva.com/", '_blank').focus(); // Add the url to your canva page or account
+      } else if (id === "facebook") {
         window.open("https://mail.google.com/mail/u/0/#inbox", '_blank').focus(); //Add your email after "mailto:""
       } else if (id === "facebook") {
         window.open("https://www.facebook.com/", '_blank').focus(); //Add the url to your facebook page or account

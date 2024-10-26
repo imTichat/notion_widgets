@@ -1,6 +1,10 @@
+<!-- 
+Source https://codepen.io/ismailvtl/pen/KrVrbp
+-->
 <html>
 <head>
 <style>
+    
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,600');
 :root {
     --calendar-bg-color: #fed6b8;
@@ -16,31 +20,26 @@
 * {
     padding: 0;
     margin: 0;
-    box-sizing: border-box;
 }
 
-body {
+    body{
     background-color: #262829;
-    overflow: hidden; /* Prevent body scrolling */
-}
-
+    }
 .calendar {
     font-family: 'Comic Sans MS', sans-serif;
-    width: 100%;
-    max-width: 400px;
-    height: 100vh; /* Make it fit the full height of the viewport */
+    position: relative;
+    max-width: 400px; /*change as per your design need */
+    min-width: 320px;
     background: var(--calendar-bg-color);
     color: var(--calendar-font-color);
-    margin: 0 auto; /* Center the calendar horizontally */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    margin: 20px auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: normal;
 }
 
 .calendar-inner {
-    padding: 10px;
-    flex-grow: 1; /* Allow the inner container to expand */
-    overflow-y: auto;
+    padding: 10px 10px;
 }
 
 .calendar .calendar-inner .calendar-body {
@@ -54,10 +53,16 @@ body {
     min-height: 30px;
     line-height: 30px;
     border: 1px solid transparent;
-    margin: 5px 2px;
+    margin: 10px 2px 0px;
 }
 
 .calendar .calendar-inner .calendar-body div:nth-child(-n+7) {
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--weekdays-border-bottom-color);
+}
+
+.calendar .calendar-inner .calendar-body div:nth-child(-n+7):hover {
+    border: 1px solid transparent;
     border-bottom: 1px solid var(--weekdays-border-bottom-color);
 }
 
@@ -72,41 +77,91 @@ body {
     border: 1px solid var(--calendar-date-hover-color);
 }
 
+.calendar .calendar-inner .calendar-body div.empty-dates:hover {
+    border: 1px solid transparent;
+}
+
 .calendar .calendar-inner .calendar-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .calendar .calendar-inner .calendar-controls a {
     color: var(--calendar-font-color);
-    font-size: 26px;
-    text-decoration: none;
-    padding: 4px 12px;
-    background: var(--calendar-nextprev-bg-color);
-    margin-bottom: 10px;
 }
 
 .calendar .calendar-inner .calendar-today-date {
+    display: grid;
     text-align: center;
     cursor: pointer;
+    margin: 3px 0px;
     background: var(--calendar-current-date-color);
-    padding: 8px;
-    margin: 3px 0;
+    padding: 8px 0px;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-year-month {
+    display: flex;
+    min-width: 100px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next {
+    text-align: right;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-year-label,
+.calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-month-label {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today {
+    background: var(--calendar-today-color);
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today:hover {
+    border: 1px solid transparent;
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today a {
+    outline: 2px solid var(--calendar-today-innerborder-color);
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next a,
+.calendar .calendar-inner .calendar-controls .calendar-prev a {
+    font-family: consolas, sans-serif;
+    font-size: 26px;
+    text-decoration: none;
+    padding: 4px 12px;
+    display: inline-block;
+    background: var(--calendar-nextprev-bg-color);
+    margin: 0 0 10px 0;
 }
 </style>
 </head>
-<body>
 <div class="calendar"></div>
 <script>
-// JavaScript for Calendar - no changes needed here
+//check the console for date click event
+
 function CalendarControl() {
   const calendar = new Date();
   const calendarControl = {
     localDate: new Date(),
     calWeekDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     calMonthName: [
-      "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
     ],
     daysInMonth: function(month, year) {
       return new Date(year, month, 0).getDate();
@@ -151,7 +206,9 @@ function CalendarControl() {
       yearLabel.innerHTML = calendar.getFullYear();
     },
     displayMonth: function() {
-      let monthLabel = document.querySelector(".calendar .calendar-month-label");
+      let monthLabel = document.querySelector(
+        ".calendar .calendar-month-label"
+      );
       monthLabel.innerHTML = calendarControl.calMonthName[calendar.getMonth()];
     },
     selectDate: function(e) {
@@ -195,11 +252,13 @@ function CalendarControl() {
       calendarControl.displayYear();
       let count = 1;
       let prevDateCount = 0;
+      //let prevMonthLastDate = calendarControl.getPreviousMonthLastDate();
       let calendarDays = calendarControl.daysInMonth(
         calendar.getMonth() + 1,
         calendar.getFullYear()
       );
 
+      // dates of current month
       for (let i = 1; i < calendarDays; i++) {
         if (i < calendarControl.firstDayNumber()) {
           prevDateCount += 1;
@@ -226,6 +285,7 @@ function CalendarControl() {
         }
       }
 
+      //remaining dates after month dates
       for (let j = 0; j < prevDateCount + 1; j++) {
         document.querySelector(
           ".calendar .calendar-body"
@@ -270,5 +330,4 @@ function CalendarControl() {
 const calendarControl = new CalendarControl();
 
 </script>
-</body>
 </html>

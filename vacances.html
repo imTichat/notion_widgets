@@ -1,69 +1,157 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier Universitaire ENSSAT 2024-2025</title>
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #262829;
-            color: #fdd2ac;
-        }
-        .calendar-table {
-            width: 60%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fdd2ac;
-            color: #b06364;
-        }
-        .calendar-table th, .calendar-table td {
-            border: 1px solid #e5aca5;
-            padding: 10px;
-            text-align: center;
-        }
-        .calendar-table th {
-            background-color: #e5aca5;
-            color: #fff;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendrier universitaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--creme); }
+
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--taupe);
+    padding: 12px 17px 17px 12px;
+    container-type: inline-size;
+  }
+
+  .card {
+    background: var(--creme);
+    border: 2px solid var(--lin);
+    border-radius: 16px;
+    box-shadow: 5px 5px 0 var(--rose);
+    padding: clamp(12px, 3cqi, 24px);
+  }
+
+  h1 {
+    font-size: clamp(1.1rem, 4cqi, 2rem);
+    font-weight: 800;
+    color: var(--caramel);
+    letter-spacing: .03em;
+    text-align: center;
+    margin-bottom: clamp(10px, 2.5cqi, 18px);
+  }
+
+  .list {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+  /* Deux colonnes quand le bloc est large */
+  @container (min-width: 720px) {
+    .list { grid-template-columns: 1fr 1fr; }
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--creme);
+    border: 1px solid var(--lin);
+    border-left: 5px solid var(--lin);
+    border-radius: 10px;
+  }
+  .item.current { background: var(--rose); border-color: var(--caramel); }
+  .item.next    { border-left-color: var(--caramel); }
+  .item.past    { opacity: .6; }
+
+  .text { flex: 1; min-width: 0; }
+  .label {
+    font-weight: 800;
+    font-size: clamp(.9rem, 2.4cqi, 1.1rem);
+    color: var(--caramel);
+  }
+  .dates {
+    font-weight: 600;
+    font-size: clamp(.8rem, 2cqi, .95rem);
+  }
+  .dates::first-letter { text-transform: uppercase; }
+
+  .badge {
+    flex-shrink: 0;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--rose);
+    color: var(--caramel);
+    white-space: nowrap;
+  }
+  .item.current .badge { background: var(--caramel); color: var(--creme); }
+  .item.past .badge { background: transparent; color: var(--taupe); }
+</style>
 </head>
 <body>
-    <table class="calendar-table">
-        <thead>
-            <tr>
-                <th colspan="2">FISE1</th>
-                <th colspan="2">FISE2</th>
-                <th colspan="2">FISE3</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="2">Lundi 9/09/2024</td>
-                <td colspan="2">Lundi 9/09/2024</td>
-                <td colspan="2">Lundi 9/09/2024</td>
-            </tr>
-            <tr>
-                <td>Congés d'automne</td>
-                <td colspan="5">Lundi 28 octobre 2024 au dimanche 3 novembre 2024</td>
-            </tr>
-            <tr>
-                <td>Congés de fin d'année</td>
-                <td colspan="5">Lundi 23 décembre 2024 au dimanche 5 janvier 2025 inclus</td>
-            </tr>
-            <tr>
-                <td>Fin du 1er semestre</td>
-                <td colspan="5">Vendredi 17 janvier 2025</td>
-            </tr>
-            <tr>
-                <td>Congés d'hiver</td>
-                <td colspan="5">Lundi 17 février 2025 au dimanche 23 février 2025</td>
-            </tr>
-            <tr>
-                <td>Congés de printemps</td>
-                <td colspan="5">Lundi 14 avril 2025 au dimanche 20 avril 2025 inclus</td>
-            </tr>
-        </tbody>
-    </table>
+
+<section class="card">
+  <h1 id="title"></h1>
+  <ul class="list" id="list"></ul>
+</section>
+
+<script>
+(() => {
+  // ===== Tes dates : modifie seulement cette partie pour une nouvelle année =====
+  const TITLE = "Calendrier universitaire ENSSAT 2024-2025";
+  const PERIODS = [
+    { label: "Rentrée FISE1, FISE2, FISE3", start: "2024-09-09" },
+    { label: "Congés d'automne",           start: "2024-10-28", end: "2024-11-03" },
+    { label: "Congés de fin d'année",      start: "2024-12-23", end: "2025-01-05" },
+    { label: "Fin du 1er semestre",        start: "2025-01-17" },
+    { label: "Congés d'hiver",             start: "2025-02-17", end: "2025-02-23" },
+    { label: "Congés de printemps",        start: "2025-04-14", end: "2025-04-20" },
+  ];
+  // =============================================================================
+
+  const DAY = 86400000;
+  const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const fmt = (d) => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+
+  document.getElementById("title").textContent = TITLE;
+  document.title = TITLE;
+
+  const items = PERIODS
+    .map((p) => ({ ...p, s: parse(p.start), e: parse(p.end || p.start) }))
+    .sort((a, b) => a.s - b.s);
+
+  const nextIndex = items.findIndex((p) => p.s > today);
+
+  document.getElementById("list").replaceChildren(...items.map((p, i) => {
+    let state, badge;
+    if (today > p.e) {
+      state = "past"; badge = "Passé";
+    } else if (today >= p.s) {
+      state = "current";
+      const left = Math.round((p.e - today) / DAY);
+      badge = p.end ? (left === 0 ? "Dernier jour" : `En cours · encore ${left} j`) : "Aujourd'hui";
+    } else {
+      const days = Math.round((p.s - today) / DAY);
+      state = i === nextIndex ? "next" : "future";
+      badge = days === 1 ? "Demain" : `Dans ${days} j`;
+    }
+
+    const li = document.createElement("li");
+    li.className = `item ${state}`;
+    li.innerHTML = `<div class="text"><div class="label"></div><div class="dates"></div></div><span class="badge"></span>`;
+    li.querySelector(".label").textContent = p.label;
+    li.querySelector(".dates").textContent = p.end ? `${fmt(p.s)} → ${fmt(p.e)}` : fmt(p.s);
+    li.querySelector(".badge").textContent = badge;
+    return li;
+  }));
+})();
+</script>
 </body>
 </html>

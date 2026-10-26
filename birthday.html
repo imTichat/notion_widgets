@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--creme); }
+
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--taupe);
+    padding: 12px 17px 17px 12px;
+    container-type: inline-size;
+  }
+
+  .card {
+    background: var(--creme);
+    border: 2px solid var(--lin);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--rose);
+    padding: clamp(14px, 3cqi, 26px);
+  }
+
+  /* ----- Prochain anniversaire ----- */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(8px, 2cqi, 16px);
+  }
+  @container (min-width: 560px) {
+    .hero { flex-direction: row; text-align: left; gap: clamp(16px, 4cqi, 40px); }
+  }
+
+  .cupcake { width: clamp(90px, 20cqi, 170px); flex-shrink: 0; }
+  .flame { transform-origin: 60px 16px; animation: flicker 1.6s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50%      { transform: scale(1.08, .94) rotate(3deg); }
+  }
+  .party .cupcake { animation: bounce 1.2s ease-in-out infinite; }
+  @keyframes bounce { 50% { transform: translateY(-6px); } }
+
+  .info { flex: 1; min-width: 0; }
+  .eyebrow {
+    font-size: clamp(.7rem, 1.8cqi, .85rem);
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .name {
+    font-variant-caps: all-petite-caps;
+    font-size: clamp(1.8rem, 8cqi, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--caramel);
+    overflow-wrap: anywhere;
+  }
+  .detail {
+    font-size: clamp(.9rem, 2.4cqi, 1.15rem);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .countdown {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: var(--rose);
+    color: var(--caramel);
+    font-weight: 800;
+    font-size: clamp(.95rem, 2.6cqi, 1.25rem);
+  }
+  .party .countdown { background: var(--caramel); color: var(--creme); }
+
+  /* ----- Liste à venir ----- */
+  .section-title {
+    margin: clamp(16px, 3cqi, 24px) 0 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--lin);
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .list { list-style: none; display: grid; gap: 6px; }
+  @container (min-width: 620px) { .list { grid-template-columns: 1fr 1fr; } }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px 7px 7px;
+    border: 1px solid var(--lin);
+    border-radius: 12px;
+    background: var(--creme);
+  }
+  .row.today { background: var(--rose); border-color: var(--caramel); }
+  .chip {
+    flex-shrink: 0;
+    width: 44px;
+    padding: 4px 0;
+    border-radius: 9px;
+    background: var(--rose);
+    text-align: center;
+    line-height: 1.05;
+  }
+  .row.today .chip { background: var(--caramel); color: var(--creme); }
+  .chip b { display: block; font-size: 1.05rem; font-weight: 800; color: inherit; }
+  .chip span { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+  .row.today .chip b { color: var(--creme); }
+  .chip b { color: var(--caramel); }
+
+  .who { flex: 1; min-width: 0; }
+  .who strong { display: block; font-weight: 800; color: var(--caramel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .who small { font-size: .8rem; font-weight: 700; }
+  .when { flex-shrink: 0; font-size: .8rem; font-weight: 800; }
+
+  .del {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border: none; border-radius: 8px;
+    background: transparent;
+    color: var(--taupe);
+    font: inherit; font-size: 1.1rem; line-height: 1;
+    cursor: pointer;
+  }
+  .del:hover { background: var(--rose); color: var(--caramel); }
+
+  .empty { font-weight: 700; font-style: italic; text-align: center; padding: 6px 0; }
+
+  /* ----- Formulaire ----- */
+  details { margin-top: 14px; }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 10px;
+    background: var(--rose);
+    color: var(--caramel);
+    font-weight: 800;
+    font-size: .9rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--lin); }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  @container (min-width: 560px) { form { grid-template-columns: 2fr 1fr 1.4fr 1.2fr auto; } }
+  form .full { grid-column: 1 / -1; }
+  @container (min-width: 560px) { form .full { grid-column: auto; } }
+
+  input, select, .add {
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 700;
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--lin);
+    background: var(--creme);
+    color: var(--caramel);
+  }
+  input::placeholder { color: var(--taupe); opacity: .85; }
+  .add {
+    border: none;
+    background: var(--caramel);
+    color: var(--creme);
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .add:hover { background: var(--taupe); }
+  .msg { grid-column: 1 / -1; font-size: .8rem; font-weight: 700; min-height: 1em; }
+
+  :focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flame, .party .cupcake { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="card" id="card">
+  <div class="hero">
+    <!-- Cupcake dessiné en SVG -->
+    <svg class="cupcake" viewBox="0 0 120 140" role="img" aria-label="Cupcake">
+      <!-- bougie -->
+      <rect x="56.5" y="18" width="7" height="26" rx="2.5" fill="var(--creme)" stroke="var(--taupe)" stroke-width="2"/>
+      <path d="M57 26 L63 22 M57 33 L63 29 M57 40 L63 36" stroke="var(--rose)" stroke-width="2.5" stroke-linecap="round"/>
+      <g class="flame">
+        <path d="M60 2 C67 9 66 15 60 17 C54 15 53 9 60 2 Z" fill="var(--caramel)"/>
+        <path d="M60 8 C63 11 63 14 60 15 C57 14 57 11 60 8 Z" fill="var(--rose)"/>
+      </g>
+      <!-- caissette -->
+      <path d="M26 80 L94 80 L85 130 Q84 134 80 134 L40 134 Q36 134 35 130 Z" fill="var(--caramel)"/>
+      <path d="M38 82 L44 132 M49 82 L52 132 M60 82 L60 132 M71 82 L68 132 M82 82 L76 132"
+            stroke="var(--taupe)" stroke-width="3" stroke-linecap="round"/>
+      <!-- glaçage -->
+      <path d="M20 82 C14 70 24 62 32 63 C28 51 40 45 48 48 C50 38 62 36 68 42
+               C76 37 88 42 86 52 C96 52 104 62 98 72 C104 76 102 84 96 85
+               C72 92 46 92 24 86 C20 85 18 84 20 82 Z"
+            fill="var(--rose)" stroke="var(--lin)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M30 76 C44 82 74 82 90 74 M40 62 C52 68 70 68 82 60 M50 50 C56 54 64 54 70 49"
+            fill="none" stroke="var(--creme)" stroke-width="3" stroke-linecap="round"/>
+      <!-- vermicelles -->
+      <g stroke-width="3.2" stroke-linecap="round">
+        <path d="M36 70 l5 -2" stroke="var(--caramel)"/>
+        <path d="M52 77 l4 3" stroke="var(--taupe)"/>
+        <path d="M66 71 l5 -1" stroke="var(--caramel)"/>
+        <path d="M80 79 l3 -4" stroke="var(--taupe)"/>
+        <path d="M46 58 l4 2" stroke="var(--taupe)"/>
+        <path d="M62 60 l3 -3" stroke="var(--caramel)"/>
+        <path d="M76 55 l5 1" stroke="var(--taupe)"/>
+        <path d="M88 67 l2 4" stroke="var(--caramel)"/>
+      </g>
+    </svg>
+
+    <div class="info" aria-live="polite">
+      <div class="eyebrow" id="eyebrow">Next birthday</div>
+      <div class="name" id="nextName">—</div>
+      <div class="detail" id="nextDetail"></div>
+      <div class="countdown" id="countdown" hidden></div>
+    </div>
+  </div>
+
+  <div class="section-title" id="listTitle">Coming up</div>
+  <ul class="list" id="list"></ul>
+
+  <details id="manage">
+    <summary>+ Add a birthday</summary>
+    <form id="form" autocomplete="off">
+      <input class="full" id="fName" type="text" maxlength="40" placeholder="Name" aria-label="Name" required>
+      <select id="fDay" aria-label="Day"></select>
+      <select id="fMonth" aria-label="Month"></select>
+      <input id="fYear" type="number" inputmode="numeric" min="1900" placeholder="Year (optional)" aria-label="Birth year (optional)">
+      <button class="add" type="submit">Add</button>
+      <p class="msg" id="msg"></p>
+    </form>
+  </details>
+</section>
+
+<script>
+(() => {
+  // ===== Option : anniversaires écrits directement ici =====
+  // Ceux-ci apparaissent sur TOUS tes appareils (ordi, téléphone…).
+  // Format : { name: "Prénom", date: "MM-JJ", year: 1998 }  (year est facultatif)
+  const BIRTHDAYS = [
+    // { name: "Maman", date: "03-14", year: 1970 },
+    // { name: "Léa",   date: "11-02" },
+  ];
+  // Ceux ajoutés avec le bouton « + Add a birthday » sont gardés dans ce navigateur.
+  // =========================================================
+
+  const STORAGE_KEY = "notion-birthdays-v1";
+  const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const DAY = 86400000;
+  const $ = (id) => document.getElementById(id);
+
+  let local = load();
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(local)); return true; }
+    catch (e) { return false; }
+  }
+
+  const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+
+  // Prochaine date d'anniversaire (le 29 février est fêté le 28 les autres années)
+  function nextOccurrence(m, d, today) {
+    const at = (y) => (m === 2 && d === 29 && !isLeap(y)) ? new Date(y, 1, 28) : new Date(y, m - 1, d);
+    let date = at(today.getFullYear());
+    if (date < today) date = at(today.getFullYear() + 1);
+    return date;
+  }
+
+  function compute() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const all = [
+      ...BIRTHDAYS.map((b) => ({ ...b, source: "code" })),
+      ...local.map((b, i) => ({ ...b, source: "local", index: i })),
+    ];
+    return all.map((b) => {
+      const [m, d] = b.date.split("-").map(Number);
+      const when = nextOccurrence(m, d, today);
+      const days = Math.round((when - today) / DAY);
+      const age = b.year ? when.getFullYear() - b.year : null;
+      return { ...b, m, d, when, days, age };
+    }).sort((a, b) => a.days - b.days || a.name.localeCompare(b.name));
+  }
+
+  const fmtLong = (d) => d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const inDays = (n) => n === 0 ? "Today!" : n === 1 ? "Tomorrow" : `in ${n} days`;
+  const turns = (age) => age ? `turns ${age}` : "";
+  const joinNames = (arr) => arr.length < 2 ? arr[0] : arr.slice(0, -1).join(", ") + " & " + arr.at(-1);
+
+  function render() {
+    const items = compute();
+    const card = $("card");
+
+    // ----- Prochain anniversaire -----
+    if (!items.length) {
+      card.classList.remove("party");
+      $("eyebrow").textContent = "Birthdays";
+      $("nextName").textContent = "No birthdays yet";
+      $("nextDetail").textContent = "Add your family and friends below.";
+      $("countdown").hidden = true;
+      $("manage").open = true;
+    } else {
+      const first = items[0];
+      const same = items.filter((b) => b.days === first.days);
+      const isToday = first.days === 0;
+      card.classList.toggle("party", isToday);
+
+      $("eyebrow").textContent = isToday ? "🎉 Happy birthday" : "Next birthday";
+      $("nextName").textContent = joinNames(same.map((b) => b.name));
+      const ages = same.length === 1 && first.age ? ` · ${turns(first.age)}` : "";
+      $("nextDetail").textContent = fmtLong(first.when) + ages;
+      $("countdown").hidden = false;
+      $("countdown").textContent = isToday ? "It's today! 🎂" : inDays(first.days);
+    }
+
+    // ----- Liste complète -----
+    $("listTitle").hidden = !items.length;
+    $("list").replaceChildren(...items.map((b) => {
+      const li = document.createElement("li");
+      li.className = "row" + (b.days === 0 ? " today" : "");
+      li.innerHTML = `
+        <div class="chip"><b></b><span></span></div>
+        <div class="who"><strong></strong><small></small></div>
+        <div class="when"></div>`;
+      li.querySelector(".chip b").textContent = b.d === 29 && b.m === 2 && b.when.getDate() === 28 ? 28 : b.d;
+      li.querySelector(".chip span").textContent = MONTHS[b.m - 1].slice(0, 3);
+      li.querySelector(".who strong").textContent = b.name;
+      li.querySelector(".who small").textContent = turns(b.age);
+      li.querySelector(".when").textContent = inDays(b.days);
+      if (b.source === "local") {
+        const del = document.createElement("button");
+        del.className = "del";
+        del.type = "button";
+        del.textContent = "×";
+        del.dataset.index = b.index;
+        del.setAttribute("aria-label", `Remove ${b.name}`);
+        li.appendChild(del);
+      }
+      return li;
+    }));
+  }
+
+  // ----- Formulaire -----
+  const fDay = $("fDay"), fMonth = $("fMonth");
+  fMonth.innerHTML = MONTHS.map((m, i) => `<option value="${i + 1}">${m}</option>`).join("");
+  fDay.innerHTML = Array.from({ length: 31 }, (_, i) => `<option>${i + 1}</option>`).join("");
+  const maxDay = (m) => [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+
+  $("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("fName").value.trim();
+    const m = Number(fMonth.value), d = Number(fDay.value);
+    const yRaw = $("fYear").value.trim();
+    const y = yRaw ? Number(yRaw) : null;
+    const msg = $("msg");
+
+    if (!name) { msg.textContent = "Please enter a name."; return; }
+    if (d > maxDay(m)) { msg.textContent = `${MONTHS[m - 1]} only has ${maxDay(m)} days.`; return; }
+    if (y !== null && (y < 1900 || y > new Date().getFullYear())) { msg.textContent = "Please check the year."; return; }
+
+    local.push({ name, date: `${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`, ...(y ? { year: y } : {}) });
+    msg.textContent = save() ? `${name} added 🎂` : "Added, but this browser can't save it for next time.";
+    $("fName").value = ""; $("fYear").value = "";
+    render();
+    $("fName").focus();
+  });
+
+  $("list").addEventListener("click", (e) => {
+    const del = e.target.closest(".del");
+    if (!del) return;
+    local.splice(Number(del.dataset.index), 1);
+    save();
+    render();
+  });
+
+  render();
+
+  // Mise à jour automatique à minuit
+  const now = new Date();
+  const msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) - now + 1000;
+  setTimeout(function tick() { render(); setTimeout(tick, DAY); }, msToMidnight);
+})();
+</script>
+</body>
+</html>

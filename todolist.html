@@ -1,39 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do List</title>
-    <style>
-        body {
-            font-variant-caps: all-petite-caps;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Do List</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
 
-        .widget {
-            padding: 5px 5px;
-            color: #a17059;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            max-width: 95%;
-            margin: auto;
-            border: 3px solid #a17059;
-            border-radius: 5px;
-            box-shadow: 2px 2px 1px 0px #efb89e;
-            background-color: #fed6b8;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--creme); }
 
-        .title {
-            font-size: 2em;
-        }
-    </style>
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    padding: 10px 17px 17px 12px;     /* laisse de la place à l'ombre */
+    container-type: inline-size;      /* la taille suit la largeur du bloc Notion */
+  }
+
+  .widget {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 3cqi, 28px);
+    padding: clamp(8px, 2.2cqi, 20px) clamp(12px, 4cqi, 32px);
+    background: var(--creme);
+    border: 2px solid var(--taupe);
+    border-radius: 14px;
+    box-shadow: 5px 5px 0 var(--rose);
+  }
+
+  /* Petits traits décoratifs de chaque côté du titre */
+  .line {
+    flex: 1;
+    max-width: 160px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--lin);
+  }
+
+  .title {
+    font-variant-caps: all-petite-caps;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 7cqi, 3.6rem);
+    line-height: 1.1;
+    letter-spacing: .04em;
+    color: var(--caramel);
+    text-align: center;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="widget">
-            <div class="title">To Do List</div>
-        </div>
-    </div>
+  <header class="widget">
+    <span class="line" aria-hidden="true"></span>
+    <h1 class="title">To Do List</h1>
+    <span class="line" aria-hidden="true"></span>
+  </header>
 </body>
 </html>

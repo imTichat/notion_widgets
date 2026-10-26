@@ -16,20 +16,24 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { background: var(--creme); }
+  /* Le bandeau remplit tout le bloc Notion, quelle que soit sa hauteur */
+  html, body { height: 100%; background: var(--creme); }
 
   body {
     font-family: 'Nunito', system-ui, sans-serif;
-    padding: 10px 17px 17px 12px;     /* laisse de la place à l'ombre */
-    container-type: inline-size;      /* la taille suit la largeur du bloc Notion */
+    display: flex;
+    padding: 6px 11px 11px 6px;       /* laisse de la place à l'ombre */
+    container-type: size;             /* la taille suit la largeur ET la hauteur du bloc */
   }
 
   .widget {
+    flex: 1;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: clamp(10px, 3cqi, 28px);
-    padding: clamp(8px, 2.2cqi, 20px) clamp(12px, 4cqi, 32px);
+    padding: 4px clamp(12px, 4cqi, 32px);
     background: var(--creme);
     border: 2px solid var(--taupe);
     border-radius: 14px;
@@ -48,7 +52,7 @@
   .title {
     font-variant-caps: all-petite-caps;
     font-weight: 800;
-    font-size: clamp(1.4rem, 7cqi, 3.6rem);
+    font-size: clamp(.9rem, min(7cqi, 45cqh), 4rem);   /* s'adapte au plus petit des deux */
     line-height: 1.1;
     letter-spacing: .04em;
     color: var(--caramel);

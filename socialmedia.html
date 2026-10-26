@@ -1,229 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Socials</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Socials</title>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<!-- Font Awesome en version SVG : les icônes sont dessinées directement,
+     sans police à télécharger (plus fiable dans un bloc Notion) -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
 
-    body {
-      display: grid;
-      place-items: center;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    .wrapper {
-      padding-top: 10px;
-      display: inline-flex;
-    }
+  html, body { background: var(--creme); }
 
-    .fill {
-      width: 50px;
-      height: 50px;
-      padding: 2%;
-      color: #fff;
-      outline: 0;
-      border: 2px solid #fed6b8;
-      cursor: pointer;
-      position: relative;
-      background-color: rgba(0, 0, 0, 0);
-      margin: 5px;
-    }
+  body {
+    padding: 12px;
+    container-type: inline-size;   /* la mise en page suit la largeur du bloc Notion */
+  }
 
-    .fill::after {
-      content: "";
-      width: 100%;
-      z-index: -1;
-      position: absolute;
-      height: 100%;
-      top: 5px;
-      left: 5px;
-      transition: 0.2s;
-    }
+  /* Une seule ligne qui occupe toute la largeur... */
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(var(--count, 10), 1fr);
+    gap: clamp(8px, 1.6cqi, 18px);
+    padding: 2px 7px 9px 2px;      /* laisse de la place à l'ombre */
+  }
 
-    .fill:hover::after {
-      top: 0px;
-      left: 0px;
-    }
+  /* ...et deux lignes égales quand le bloc est étroit */
+  @container (max-width: 520px) {
+    .wrapper { grid-template-columns: repeat(var(--half, 5), 1fr); }
+  }
 
-    .icon {
-      font-size: 1em;
-    }
+  .social {
+    width: 100%;
+    aspect-ratio: 1;               /* toujours carré, quelle que soit la largeur */
+    display: grid;
+    place-items: center;
+    color: var(--caramel);
+    background: var(--creme);
+    border: 2px solid var(--taupe);
+    border-radius: 10px;
+    text-decoration: none;
+    /* Ombre décalée, toujours SOUS le bouton */
+    box-shadow: 5px 5px 0 var(--rose);
+    transition: color .2s, background .2s, border-color .2s, box-shadow .2s, transform .2s;
+  }
 
-    .blog:hover,
-    .blog::after {
-      background-color: #ffbd2f;
-    }
+  .social svg { width: 42%; height: auto; }   /* l'icône grandit avec le bouton */
 
-    .canva:hover,
-    .canva::after {
-      background: #ab48c4;
-    }
+  /* Au survol : l'ombre se replace sous le bouton, qui passe en caramel */
+  .social:hover,
+  .social:focus-visible {
+    color: var(--creme);
+    background: var(--caramel);
+    border-color: var(--caramel);
+    box-shadow: 0 0 0 var(--caramel);
+    transform: translate(2px, 2px);
+  }
+  .social:active { transform: translate(2px, 2px) scale(.94); }
+  .social:focus-visible { outline: 2px solid var(--taupe); outline-offset: 3px; }
 
-    .email:hover,
-    .email::after {
-      background-color: #d38934;
-    }
-
-    .facebook:hover,
-    .facebook::after {
-      background-color: #4267B2;
-    }
-
-    .instagram:hover,
-    .instagram::after {
-      background: #bb4f85;
-    }
-
-    .linkedin:hover,
-    .linkedin::after {
-      background-color: #0e76a8;
-    }
-
-    .twitter:hover,
-    .twitter::after {
-      background-color: #26a7de;
-    }
-
-    .tiktok:hover,
-    .tiktok::after {
-      background-color: #ff0050;
-    }
-
-    .youtube:hover,
-    .youtube::after {
-      background-color: #FF0000;
-    }
-
-    .pinterest:hover,
-    .pinterest::after {
-      background-color: #c8232c;
-    }
-
-    .telegram:hover,
-    .telegram::after {
-      background-color: #2AABEE;
-    }
-
-    .github:hover,
-    .github::after {
-      background-color: #aa929e;
-    }
-
-    .social {
-      position: relative;
-      margin: 10px;
-      cursor: pointer;
-    }
-
-    .social:hover {
-      color: #fff;
-    }
-  </style>
+  @media (prefers-reduced-motion: reduce) {
+    .social { transition: none; }
+  }
+</style>
 </head>
 
 <body>
-  <div class="wrapper">
-
-    <!-- Start Canva Icon -->
-    <div id="canva" onclick="navigate(this.id)" class="fill canva">
-      <span class="icon canva"><i class="fa-solid fa-palette"></i></span>
-    </div>
-    <!-- End Canva Icon -->
-
-
-    <!-- Start email Icon -->
-    <div id="email" onclick="navigate(this.id)" class="fill email">
-      <span class="icon email"><i class="fa-solid fa-envelope"></i></span>
-    </div>
-    <!-- End email Icon -->
-
-    <!-- Start facebook Icon -->
-    <div id="facebook" onclick="navigate(this.id)" class="fill facebook">
-      <span class="icon"><i class="fab fa-facebook"></i></span>
-    </div>
-    <!-- End facebook Icon -->
-
-    <!-- Start instagram Icon -->
-    <div id="instagram" onclick="navigate(this.id)" class="fill instagram">
-      <span class="icon"><i class="fab fa-instagram"></i></span>
-    </div>
-    <!-- End instagram Icon -->
-
-    <!-- Start linkedin Icon -->
-    <div id="linkedin" onclick="navigate(this.id)" class="fill linkedin">
-      <span class="icon"><i class="fab fa-linkedin"></i></span>
-    </div>
-    <!-- End linkedin Icon -->
-
-    <!-- Start twitter Icon -->
-    <div id="twitter" onclick="navigate(this.id)" class="fill twitter">
-      <span class="icon"><i class="fab fa-twitter"></i></span>
-    </div>
-    <!-- End twitter Icon -->
-
-    <!-- Start tiktok Icon -->
-    <div id="tiktok" onclick="navigate(this.id)" class="fill tiktok">
-      <span class="icon"><i class="fab fa-tiktok"></i></span>
-    </div>
-    <!-- End tiktok Icon -->
-
-    <!-- Start youtube Icon -->
-    <div id="youtube" onclick="navigate(this.id)" class="fill youtube">
-      <span class="icon"><i class="fab fa-youtube"></i></span>
-    </div>
-    <!-- End youtube Icon -->
-
-    <!-- Start pinterest Icon -->
-    <div id="pinterest" onclick="navigate(this.id)" class="fill pinterest">
-      <span class="icon"><i class="fab fa-pinterest"></i></span>
-    </div>
-    <!-- End pinterest Icon -->
-
-    <!-- Start github Icon -->
-    <div id="github" onclick="navigate(this.id)" class="fill github">
-      <span class="icon"><i class="fab fa-github"></i></span>
-    </div>
-    <!-- End github Icon -->
-  </div>
+  <nav class="wrapper" id="socials" aria-label="My links"></nav>
 
   <script>
-    function navigate(id) {
-      //if you want the URL to open in the same window use '_parent'  instead of '_blank'
+    // ===== Tes liens : modifie, ajoute, supprime ou réordonne ici =====
+    const LINKS = [
+      { name: "Canva",     icon: "fa-solid fa-palette",    url: "https://www.canva.com/" },
+      { name: "Email",     icon: "fa-solid fa-envelope",   url: "https://mail.google.com/mail/u/0/#inbox" },
+      { name: "Facebook",  icon: "fa-brands fa-facebook",  url: "https://www.facebook.com/" },
+      { name: "Instagram", icon: "fa-brands fa-instagram", url: "https://www.instagram.com/" },
+      { name: "LinkedIn",  icon: "fa-brands fa-linkedin",  url: "https://www.linkedin.com/in/laetitia-ye-12f07m/" },
+      { name: "X",         icon: "fa-brands fa-x-twitter", url: "https://x.com/home" },
+      { name: "TikTok",    icon: "fa-brands fa-tiktok",    url: "https://www.tiktok.com/discover?lang=fr" },
+      { name: "YouTube",   icon: "fa-brands fa-youtube",   url: "https://www.youtube.com/" },
+      { name: "Pinterest", icon: "fa-brands fa-pinterest", url: "https://www.pinterest.fr/" },
+      { name: "GitHub",    icon: "fa-brands fa-github",    url: "https://github.com/imTichat/notion_widgets" },
+    ];
 
-      if (id === "canva") {
-        window.open("https://www.canva.com/", '_blank').focus(); // Add the url to your canva page or account
-      } else if (id === "email") {
-        window.open("https://mail.google.com/mail/u/0/#inbox", '_blank').focus(); //Add your email after "mailto:""
-      } else if (id === "facebook") {
-        window.open("https://www.facebook.com/", '_blank').focus(); //Add the url to your facebook page or account
-      } else if (id === "instagram") {
-        window.open("https://www.instagram.com/", '_blank').focus(); //Add the url to your instagram account
-      } else if (id === "linkedin") {
-        window.open("https://www.linkedin.com/in/laetitia-ye-12f07m/", '_blank').focus(); //Add the url to your pinterest account
-      } else if (id === "twitter") {
-        window.open("https://x.com/home", '_blank').focus(); //Add the url to your pinterest account
-      } else if (id === "tiktok") {
-        window.open("https://www.tiktok.com/discover?lang=fr", '_blank').focus(); //Add the url to your tiktok account
-      } else if (id === "youtube") {
-        window.open("https://www.youtube.com/", '_blank').focus(); //Add the url to your youtube account
-      } else if (id === "pinterest") {
-        window.open("https://www.pinterest.fr/", '_blank').focus(); //Add the url to your pinterest account
-      } else if (id === "github") {
-        window.open("https://github.com/imTichat/notion_widgets", '_blank').focus(); //Add the url to your GitHub account
-      }
-    }
+    // "_blank" = nouvel onglet ; "_top" = remplace la page Notion
+    const TARGET = "_blank";
+
+    const nav = document.getElementById("socials");
+    // Le nombre de colonnes suit automatiquement le nombre de liens
+    nav.style.setProperty("--count", LINKS.length);
+    nav.style.setProperty("--half", Math.ceil(LINKS.length / 2));
+    nav.replaceChildren(...LINKS.map(({ name, icon, url }) => {
+      const a = document.createElement("a");
+      a.className = "social";
+      a.href = url;
+      a.target = TARGET;
+      a.rel = "noopener noreferrer";
+      a.title = name;
+      a.setAttribute("aria-label", name);
+      const i = document.createElement("i");
+      i.className = icon;
+      i.setAttribute("aria-hidden", "true");
+      a.appendChild(i);
+      return a;
+    }));
   </script>
 </body>
-
 </html>

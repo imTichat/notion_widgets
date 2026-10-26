@@ -1,174 +1,178 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greetings</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greetings</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
 
-    <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body { background: var(--creme); }
 
-        body{
-            font-variant-caps: all-petite-caps;
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+  }
 
+  .widget {
+    width: 100%;
+    container-type: inline-size;   /* les tailles suivent la largeur du widget */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 22px 16px;
+    color: var(--taupe);
+    background: var(--creme);
+    border: 2px solid var(--lin);
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--rose);
+  }
 
-        }
+  .greet {
+    font-variant-caps: all-petite-caps;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 8cqi, 5rem);
+    line-height: 1.1;
+    color: var(--caramel);
+    letter-spacing: .02em;
+  }
+  .greet .icon { margin-right: .25em; }
 
-        .widget {
-            padding: 5px 5px ;
-            color: #a17059;
-            display: flex;
-            justify-content:center;
-            align-items:center;
-            flex-direction: column;
-            max-width: 95%;
-            margin: auto;
-            border: 3px solid #a17059;
-            border-radius: 5px;
-            box-shadow: 2px 2px 1px 0px #efb89e;
-            background-color: #fed6b8;
-            
+  .date {
+    font-variant-caps: all-petite-caps;
+    font-weight: 700;
+    font-size: clamp(.95rem, 4cqi, 2.6rem);
+    letter-spacing: .04em;
+  }
 
-        }
+  .clock {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    margin-top: 4px;
+    padding: 6px 16px;
+    font-weight: 800;
+    font-size: clamp(1.3rem, 6.5cqi, 4rem);
+    font-variant-numeric: tabular-nums;   /* chiffres à largeur fixe : plus de tremblement */
+    color: var(--caramel);
+    background: var(--rose);
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .clock:hover { background: var(--lin); }
+  .clock:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
 
-           
-        .greet{
-            font-size: 3em;
-        }
+  .colon { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
 
-        .date {
-      
-            font-family: monospace;
-            font-size: 2em;
-        }
+  .ampm {
+    font-size: .5em;
+    margin-left: 6px;
+    font-variant-caps: all-small-caps;
+    letter-spacing: .05em;
+  }
 
-        .clock {
-            font-family: monospace;
-            font-size: 2em;
-        }
+  .hint {
+    font-size: .7rem;
+    opacity: .8;
+  }
 
-        .time {
-            display: inline-block;
-            min-width: 20px;
-        }
-
-        .colon {
-            font-size: 1em;
-            display: inline-block;
-        }
-
-     
-
-
-
-
-    </style>
+  @media (prefers-reduced-motion: reduce) {
+    .colon { animation: none; }
+  }
+</style>
 </head>
 <body>
 
-
-
-
-<div class="container>">
-    <div class="widget">
-
-            <div class="greet" id="greet"></div>
-
-                <div class="date" id="date"></div>
-                <div class="clock">
-                    <div class="time" id="hour"></div>
-                    <div class="colon">:</div>
-                    <div class="time" id="min"></div>
-                    <div class="colon">:</div>
-                    <div class="time" id="sec"></div>
-                </div>
-           
-
-        
-
-    </div>
+<div class="widget">
+  <div class="greet" id="greet" aria-live="polite"></div>
+  <div class="date" id="date"></div>
+  <button class="clock" id="clock" type="button" title="Click to switch 12h / 24h">
+    <span id="hour"></span><span class="colon">:</span><span id="min"></span><span class="colon">:</span><span id="sec"></span><span class="ampm" id="ampm"></span>
+  </button>
 </div>
-        
-
-
 
 <script>
+(() => {
+  // ===== Settings =====
+  const NAME = "Laeti";
+  const FORMAT_KEY = "greeting-clock-24h";
 
-function dispalyGreetings(today){
-        hrs = today.getHours();
-        name="Laeti"
-        if (hrs < 12)
-            greet = 'Good Morning  '+name;
-        else if (hrs >= 12 && hrs <= 17)
-            greet = 'Good Afternoon '+name;
-        else if (hrs >= 17 && hrs <= 24)
-            greet = 'Good Evening  '+name;
-        document.getElementById('greet').innerHTML = greet;
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    greet: $("greet"), date: $("date"), clock: $("clock"),
+    hour: $("hour"), min: $("min"), sec: $("sec"), ampm: $("ampm"),
+  };
 
-    }
+  let timer = null;
+  let use24h = false;
+  try { use24h = localStorage.getItem(FORMAT_KEY) === "1"; } catch (e) {}
 
-    function dispalyDate(today) {  
-       
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
+  const pad = (n) => String(n).padStart(2, "0");
 
-        var dayName = days[today.getDay()];
-        var monthName = monthNames[today.getMonth()];
-        var date = today.getDate();
-        var year = today.getFullYear();
-        document.getElementById('date').innerHTML =dayName+", "+monthName+" "+date+" "+year;
+  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+  });
 
-    }
+  function greetingFor(h) {
+    if (h >= 5  && h < 12) return { text: "Good Morning",   icon: "☀︎" };
+    if (h >= 12 && h < 18) return { text: "Good Afternoon", icon: "☕︎" };
+    if (h >= 18 && h < 22) return { text: "Good Evening",   icon: "☾" };
+    return { text: "Good Night", icon: "✦" };
+  }
 
+  // Only touch the DOM when a value actually changes
+  function set(el, value) {
+    if (el.textContent !== value) el.textContent = value;
+  }
 
-    function dispalyClock(today) {
+  function update() {
+    const now = new Date();
+    const h = now.getHours();
 
-        var hour = padZeros(twelveHour(today.getHours()));
-        var minutes = padZeros(today.getMinutes());
-        var seconds = padZeros(today.getSeconds());
-       
-        if(today.getHours() >=12){
-            seconds+=" pm"
-        }
-        else{
-            seconds+=" am"
-        }
-       
-        document.getElementById('hour').innerHTML = hour;
-        document.getElementById('min').innerHTML = minutes;
-        document.getElementById('sec').innerHTML = seconds;
-    }
+    const g = greetingFor(h);
+    const greetHTML = `<span class="icon" aria-hidden="true">${g.icon}</span>${g.text}, ${NAME}`;
+    if (els.greet.innerHTML !== greetHTML) els.greet.innerHTML = greetHTML;
 
-    function twelveHour(hour) {
-        if (hour > 12) {
-            return hour -= 12
-        } else if (hour === 0) {
-            return hour = 12;
-        } else {
-            return hour
-        }
-    }
-    function padZeros(num) {
-        if (num < 10) {
-            num = '0' + num
-        };
-        return num;
-    }
+    set(els.date, dateFormatter.format(now));
 
-    function dispalyWidget() {
-        var today = new Date();
-        dispalyGreetings(today);
-        dispalyDate(today);
-        dispalyClock(today);
-        setTimeout(dispalyWidget, 500);
-    }
+    set(els.hour, pad(use24h ? h : (h % 12 || 12)));
+    set(els.min, pad(now.getMinutes()));
+    set(els.sec, pad(now.getSeconds()));
+    set(els.ampm, use24h ? "" : (h < 12 ? "am" : "pm"));
 
-    dispalyWidget()
+    // Re-sync exactly on the next second (single timer, never stacked)
+    clearTimeout(timer);
+    timer = setTimeout(update, 1000 - now.getMilliseconds() + 10);
+  }
 
+  els.clock.addEventListener("click", () => {
+    use24h = !use24h;
+    try { localStorage.setItem(FORMAT_KEY, use24h ? "1" : "0"); } catch (e) {}
+    els.clock.setAttribute("aria-pressed", String(use24h));
+    update();
+  });
+  els.clock.setAttribute("aria-pressed", String(use24h));
+
+  update();
+})();
 </script>
-
 </body>
 </html>

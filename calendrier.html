@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendrier</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===== Palette (exclusive) ===== */
+  :root {
+    --creme:   #f5efe6;
+    --lin:     #D5CABC;
+    --rose:    #E8D5CC;
+    --taupe:   #BDA18A;
+    --caramel: #C49D83;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: var(--creme); }
+
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--taupe);
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .cal {
+    width: 100%;
+    max-width: 420px;
+    background: var(--creme);
+    border: 1px solid var(--lin);
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  /* ----- En-tête ----- */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .title {
+    flex: 1;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--caramel);
+    text-transform: capitalize;
+  }
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    background: var(--rose);
+    color: var(--caramel);
+    border-radius: 10px;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--caramel);
+    outline-offset: 2px;
+  }
+  .nav {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .today-btn {
+    padding: 7px 12px;
+    font-weight: 700;
+    font-size: .85rem;
+  }
+  .nav:hover, .today-btn:hover { background: var(--lin); }
+
+  /* ----- Grille ----- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .dow {
+    text-align: center;
+    font-size: .72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--lin);
+  }
+  .day {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--taupe);
+    font-weight: 700;
+    font-size: .95rem;
+    border: 1px solid transparent;
+  }
+  .day:hover { border-color: var(--taupe); }
+  .day.other { color: var(--lin); }
+  .day.today {
+    background: var(--rose);
+    color: var(--caramel);
+    font-weight: 800;
+  }
+  .day.selected {
+    background: var(--caramel);
+    color: var(--creme);
+  }
+  .day .dot {
+    position: absolute;
+    bottom: 5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--caramel);
+  }
+  .day.selected .dot { background: var(--creme); }
+  .day.other .dot { background: var(--lin); }
+
+  /* ----- Panneau des notes ----- */
+  .panel {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--lin);
+  }
+  .panel h2 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--caramel);
+    margin-bottom: 8px;
+  }
+  .panel h2::first-letter { text-transform: uppercase; }
+  .events {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .events li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--creme);
+    border: 1px solid var(--lin);
+    border-left: 4px solid var(--caramel);
+    padding: 6px 6px 6px 10px;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-weight: 600;
+    word-break: break-word;
+  }
+  .del {
+    background: transparent;
+    color: var(--taupe);
+    font-size: 1.1rem;
+    line-height: 1;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .del:hover { background: var(--rose); color: var(--caramel); }
+  .empty {
+    font-size: .85rem;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  form { display: flex; gap: 6px; }
+  input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    font-size: .9rem;
+    color: var(--caramel);
+    background: var(--creme);
+    border: 1px solid var(--lin);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  input::placeholder { color: var(--taupe); opacity: .8; }
+  .add {
+    padding: 8px 14px;
+    font-weight: 800;
+    background: var(--caramel);
+    color: var(--creme);
+  }
+  .add:hover { background: var(--taupe); }
+</style>
+</head>
+<body>
+
+<div class="cal">
+  <header>
+    <h1 class="title" id="title" aria-live="polite"></h1>
+    <button class="nav" id="prev" type="button" aria-label="Mois précédent">‹</button>
+    <button class="today-btn" id="todayBtn" type="button">Aujourd'hui</button>
+    <button class="nav" id="next" type="button" aria-label="Mois suivant">›</button>
+  </header>
+
+  <div class="grid" id="grid" role="grid"></div>
+
+  <section class="panel">
+    <h2 id="panelTitle"></h2>
+    <ul class="events" id="events"></ul>
+    <p class="empty" id="empty">Aucune note pour ce jour.</p>
+    <form id="form" autocomplete="off">
+      <input id="input" type="text" maxlength="120" placeholder="Ajouter une note…" aria-label="Nouvelle note">
+      <button class="add" type="submit">+</button>
+    </form>
+  </section>
+</div>
+
+<script>
+(() => {
+  const MOIS  = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const JOURS = ["lun","mar","mer","jeu","ven","sam","dim"];
+  const STORAGE_KEY = "notion-calendrier-v1";
+
+  const $ = (s) => document.querySelector(s);
+  const grid = $("#grid"), title = $("#title");
+  const list = $("#events"), empty = $("#empty"), panelTitle = $("#panelTitle");
+  const form = $("#form"), input = $("#input");
+
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let selected = new Date(today);
+  let view = new Date(today.getFullYear(), today.getMonth(), 1);
+  let events = load();
+
+  // ---------- Stockage (localStorage, protégé) ----------
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); } catch (e) {}
+  }
+
+  // ---------- Utilitaires de date ----------
+  const pad = (n) => String(n).padStart(2, "0");
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parse = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const longLabel = (d) => d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+  // ---------- Rendu du calendrier ----------
+  function render() {
+    title.textContent = `${MOIS[view.getMonth()]} ${view.getFullYear()}`;
+
+    const frag = document.createDocumentFragment();
+    JOURS.forEach((j) => {
+      const el = document.createElement("div");
+      el.className = "dow";
+      el.textContent = j;
+      frag.appendChild(el);
+    });
+
+    const offset = (view.getDay() + 6) % 7;                // semaine commençant le lundi
+    const daysInMonth = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+    const cells = Math.ceil((offset + daysInMonth) / 7) * 7;
+    const start = addDays(view, -offset);
+    const selKey = keyOf(selected), todayKey = keyOf(today);
+
+    for (let i = 0; i < cells; i++) {
+      const d = addDays(start, i);
+      const k = keyOf(d);
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "day";
+      b.textContent = d.getDate();
+      b.dataset.date = k;
+      b.setAttribute("aria-label", longLabel(d));
+      b.tabIndex = k === selKey ? 0 : -1;
+
+      if (d.getMonth() !== view.getMonth()) b.classList.add("other");
+      if (k === todayKey) { b.classList.add("today"); b.setAttribute("aria-current", "date"); }
+      if (k === selKey) { b.classList.add("selected"); b.setAttribute("aria-selected", "true"); }
+      if (events[k] && events[k].length) {
+        const dot = document.createElement("span");
+        dot.className = "dot";
+        b.appendChild(dot);
+      }
+      frag.appendChild(b);
+    }
+    grid.replaceChildren(frag);
+    renderPanel();
+  }
+
+  // ---------- Rendu des notes du jour ----------
+  function renderPanel() {
+    const k = keyOf(selected);
+    const items = events[k] || [];
+    panelTitle.textContent = longLabel(selected);
+    list.replaceChildren(...items.map((text, i) => {
+      const li = document.createElement("li");
+      const span = document.createElement("span");
+      span.textContent = text;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "del";
+      del.textContent = "×";
+      del.dataset.index = i;
+      del.setAttribute("aria-label", `Supprimer « ${text} »`);
+      li.append(span, del);
+      return li;
+    }));
+    empty.hidden = items.length > 0;
+  }
+
+  // ---------- Sélection / navigation ----------
+  function select(d, focus = false) {
+    selected = d;
+    if (d.getMonth() !== view.getMonth() || d.getFullYear() !== view.getFullYear()) {
+      view = new Date(d.getFullYear(), d.getMonth(), 1);
+    }
+    render();
+    if (focus) {
+      const el = grid.querySelector(`[data-date="${keyOf(d)}"]`);
+      if (el) el.focus();
+    }
+  }
+
+  function shiftMonth(n) {
+    view = new Date(view.getFullYear(), view.getMonth() + n, 1);
+    render();
+  }
+
+  $("#prev").addEventListener("click", () => shiftMonth(-1));
+  $("#next").addEventListener("click", () => shiftMonth(1));
+  $("#todayBtn").addEventListener("click", () => select(new Date(today)));
+
+  // Un seul écouteur pour toute la grille
+  grid.addEventListener("click", (e) => {
+    const b = e.target.closest(".day");
+    if (b) select(parse(b.dataset.date));
+  });
+
+  // Navigation clavier : flèches, Page↑/↓ (mois), Début/Fin (semaine)
+  grid.addEventListener("keydown", (e) => {
+    const moves = {
+      ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7,
+      Home: -((selected.getDay() + 6) % 7),
+      End: 6 - ((selected.getDay() + 6) % 7),
+    };
+    let next = null;
+    if (e.key in moves) next = addDays(selected, moves[e.key]);
+    else if (e.key === "PageUp" || e.key === "PageDown") {
+      const n = e.key === "PageUp" ? -1 : 1;
+      const target = new Date(selected.getFullYear(), selected.getMonth() + n, 1);
+      const max = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+      next = new Date(target.getFullYear(), target.getMonth(), Math.min(selected.getDate(), max));
+    }
+    if (next) { e.preventDefault(); select(next, true); }
+  });
+
+  // ---------- Ajout / suppression de notes ----------
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    const k = keyOf(selected);
+    (events[k] = events[k] || []).push(text);
+    save();
+    input.value = "";
+    render();
+    input.focus();
+  });
+
+  list.addEventListener("click", (e) => {
+    const del = e.target.closest(".del");
+    if (!del) return;
+    const k = keyOf(selected);
+    events[k].splice(Number(del.dataset.index), 1);
+    if (!events[k].length) delete events[k];
+    save();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
